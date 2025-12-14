@@ -354,8 +354,11 @@ def load_spell():
                 else:
                     variable = 'damage_at_slot_level'
                 
+                new_description = []
                 for d in spell['desc']:
-                    d.replace(',', ';') #sostituisco le virgole per evitare problemi nel csv
+                    parts = d.split(',')
+                    for p in parts:
+                        new_description.append(p.strip())
 
                 spell_list.append({
                     "name": spell['index'].capitalize(),
@@ -367,7 +370,7 @@ def load_spell():
                     "components": [c for c in spell['components']] if 'components' in spell else "No_Components",
                     "concentration": spell['concentration'],
                     "duration": spell['duration'].capitalize(),
-                    "description": [d for d in spell['desc']],
+                    "description": [d for d in new_description],
                     #da cambiare magari, alcune spell di buff debuff non hanno attack type
                     "attack_type": spell['attack_type'].capitalize() if 'attack_type' in spell else "No_AttackType",
                     "area_of_effect":{
@@ -405,23 +408,21 @@ def write_spells(spells, filename):
             file.write(f"{'Ritual' if spell['ritual'] else 'No_Ritual'},")
             file.write(f"{spell['casting_time']},")
             file.write(f"{spell['range']},")
+            if spell['area_of_effect'] != "No_AreaEffetc":
+                file.write(f"{spell['area_of_effect']['Type']}:{spell['area_of_effect']['Size']},")
+            else:
+                file.write("No_AreaEffect,")
             for c in spell['components']:
                 if c != spell['components'][-1]:
                     file.write(f"{c}/")
                 else:
                     file.write(f"{c},")
-            
-            file.write(f"{'concentration' if spell['concentration'] else 'No_Concentration'},")
+            file.write(f"{'Concentration' if spell['concentration'] else 'No_Concentration'},")
             file.write(f"{spell['duration']},")  
             for d in spell['description']: 
                 file.write(f"{d}")
             file.write(",")
             file.write(f"{spell['attack_type']},")
-            if spell['area_of_effect'] != "No_AreaEffetc":
-                file.write(f"{spell['area_of_effect']['Type']}:{spell['area_of_effect']['Size']},")
-            else:
-                file.write("No_AreaEffect,")
-            
             if spell['damage'] != "No_Damage":
                 file.write(f"{spell['damage']['Type']},")
                 for scale in spell['damage']['Scaling']:
@@ -431,7 +432,6 @@ def write_spells(spells, filename):
                         file.write(f"{scale['Level']}:{scale['Amount']},")
             else:
                 file.write("No_Damage,")
-
             if spell['heal'] != "No_Heal":
                 for scale in spell['heal']:
                     if scale != spell['heal'][-1]:
