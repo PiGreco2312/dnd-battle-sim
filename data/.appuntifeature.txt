@@ -1,0 +1,55 @@
+1. barbaro:
+    1: rage
+    1: difesa senzarmi
+    1: mastery - da scrivere
+    # 2: danger sense
+    2: reckless
+    3: sottoclasse
+    # 4: ASI
+    5: extra attack
+    5: Fast movement - da aggiungere ?
+
+bardo:
+    1: ispirazione bardica
+    1: spellcasting
+    2: expertise
+    # 2: jack of all trades
+    3: sottoclasse
+    4: asi
+    5: font of inspiration
+
+2. chierico:
+    1: spellcasting
+    1: divine order - da sggiungere
+    2: channel divinity
+    3: sottoclasse
+    4: asi
+    # sear undead - da aggiungere?
+
+3. druido:
+    1: spellcasting
+    
+
+4. guerriero:
+    ...
+
+5. ladro:
+    ...
+
+6. mago:
+    ...
+
+7. monaco:
+    ...
+
+8. paladino:
+    ...
+
+9. ranger:
+    ...
+
+10. stregone:
+    ...
+
+11. warlock:
+    ...
