@@ -8,6 +8,18 @@ def clear_terminal():
     else:
         _ = os.system('clear')
 
+CONDITIONS = [
+    "Blinded", "Charmed", "Deafened", "Frightened", "Grappled",
+    "Incapacitated", "Invisible", "Paralyzed", "Petrified", "Poisoned",
+    "Prone", "Restrained", "Stunned", "Unconscious"
+]
+
+DAMAGE_TYPES = [
+    "Acid", "Bludgeoning", "Cold", "Fire", "Force", "Lightning",
+    "Necrotic", "Piercing", "Poison", "Psychic", "Radiant", "Slashing",
+    "Thunder"
+]
+
 #---------------------------------------------
 def weapon_template():
     weaon_list_dict = [{
@@ -329,7 +341,8 @@ def spell_template():
             "Level": "Level",
             "Amount": "Amout_heal"
         }],
-        "saving_throw": "Characteristic"
+        "saving_throw": "Characteristic",
+        "effects": "Effects"
     }]
 
     return spell_list_dict
@@ -359,6 +372,12 @@ def load_spell():
                     parts = d.split(',')
                     for p in parts:
                         new_description.append(p.strip())
+                
+                effects = []
+                for d in new_description:
+                    for condition in CONDITIONS:
+                        if condition.lower() in d.lower() and condition not in effects:
+                            effects.append(condition)
 
                 spell_list.append({
                     "name": spell['index'].capitalize(),
@@ -390,7 +409,8 @@ def load_spell():
                         "Level": int(n),
                         "Amount": h
                     } for n, h in spell['heal_at_slot_level'].items()] if 'heal_at_slot_level' in spell else "No_Heal",
-                    "saving_throw": spell['dc']['dc_type']['name'] if 'dc' in spell else "No_SavingThrow"
+                    "saving_throw": spell['dc']['dc_type']['name'] if 'dc' in spell else "No_SavingThrow",
+                    "effects": effects if effects else "No_Effects"
                 })
 
         return spell_list
@@ -424,7 +444,7 @@ def write_spells(spells, filename):
             file.write(",")
             file.write(f"{spell['attack_type']},")
             if spell['damage'] != "No_Damage":
-                file.write(f"{spell['damage']['Type']},")
+                file.write(f"{spell['damage']['Type']}:")
                 for scale in spell['damage']['Scaling']:
                     if scale != spell['damage']['Scaling'][-1]:
                         file.write(f"{scale['Level']}:{scale['Amount']}/")
@@ -440,7 +460,16 @@ def write_spells(spells, filename):
                         file.write(f"{scale['Level']}:{scale['Amount']},")
             else:
                 file.write("No_Heal,")
-            file.write(f"{spell['saving_throw']}\n")
+            file.write(f"{spell['saving_throw']},")
+            if spell['effects'] != "No_Effects":
+                for effect in spell['effects']:
+                    if effect != spell['effects'][-1]:
+                        file.write(f"{effect}/")
+                    else:
+                        file.write(f"{effect}")
+            else:
+                file.write("No_Effects")
+            file.write("\n")
 
 #---------------------------------------------------------------------------------------------------------------------------------------
 
