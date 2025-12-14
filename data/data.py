@@ -41,13 +41,13 @@ def load_weapons():
     }
     
     weapon_list = []
-    # Se la prima chiamata va a buon fine
+    
     if response.status_code == 200:
         data = response.json()
         
         print(f"Trovate {len(data['equipment'])} armi. Scaricamento dettagli in corso...")
 
-        for weapon_ref in data['equipment'][:37]:
+        for weapon_ref in data['equipment'][:36]:
             full_url = f"https://www.dnd5eapi.co{weapon_ref['url']}"
             weapon_response = requests.get(full_url)
 
@@ -56,10 +56,9 @@ def load_weapons():
                 
                 new_weapon = {
                     "Name": weapon['index'].capitalize(), 
-                    "Category": weapon.get('weapon_category', "No_Category"),
-                    "Range": weapon.get('weapon_range', "No_Range"),
-                    #cercare di risolvere il problema del two handed damage
-                    "Damage": weapon['damage']['damage_dice'] if 'two_handed_damage' not in weapon else weapon['damage']['damage_dice'] + weapon['two_handed_damage']['damage_dice'],
+                    "Category": weapon['weapon_category'].capitalize() if 'weapon_category' in weapon else "No_Category",
+                    "Range": weapon['weapon_range'].capitalize() if 'weapon_range' in weapon else "No_Range",
+                    "Damage": weapon['damage']['damage_dice'] if 'two_handed_damage' not in weapon else weapon['damage']['damage_dice'] + "/" + weapon['two_handed_damage']['damage_dice'],
                     "Type": weapon['damage']['damage_type']['name'] if 'damage' in weapon else "No_DamageType",
                     "Properties": [prop['name'] for prop in weapon.get('properties', [])],
                     "Mastery": next((key for key, val in mastery.items() if weapon['index'].capitalize() in val), "No_Mastery")
@@ -70,10 +69,10 @@ def load_weapons():
         return weapon_list
 
     else:
-        print(f"Errore nella connessione all'API: {response.status_code}")
+        print(f"Error: {response.status_code}")
         return []
 
-def write_weapons(weapons, filename="weapons56.txt"):
+def write_weapons(weapons, filename):
     with open(filename, 'w') as file:
         for weapon in weapons:
             file.write(f"{weapon['Name']},")
@@ -168,6 +167,10 @@ def load_monsters():
     # Fetch the list of monsters
     if response.status_code == 200:
         data = response.json()
+
+        #print(f"Trovate {len(data['equipment'])} armi. Scaricamento dettagli in corso...")
+        print(f"Trovati {len(data['results'])} mostri. Scaricamento dettagli in corso...")
+
         for monster in data['results']:
             monster_response = requests.get(f"https://www.dnd5eapi.co{monster['url']}")
 
@@ -231,7 +234,7 @@ def load_monsters():
         print("Errore nel recupero dei mostri.")
         return []
 
-def write_monsters(monsters, filename="monsters56.txt"):
+def write_monsters(monsters, filename):
     with open(filename, 'w') as file:
         for monster in monsters:
             file.write(f"{monster['Name']},")
@@ -314,6 +317,7 @@ def spell_template():
             "Type": "Type",
             "Size": "Size"
         },
+        #"target": "Target",
         "damage":{
             "Type": "Type",
             "Scaling":[{
@@ -325,7 +329,7 @@ def spell_template():
             "Level": "Level",
             "Amount": "Amout_heal"
         }],
-        "saving_throw": "characteristic"
+        "saving_throw": "Characteristic"
     }]
 
     return spell_list_dict
@@ -336,6 +340,8 @@ def load_spell():
 
     if response.status_code == 200:
         data = response.json()
+        print(f"Trovati {len(data['results'])-2} incantesimi. Scaricamento dettagli in corso...")
+
         for spell in data['results']:
             spell_response = requests.get(f"https://www.dnd5eapi.co{spell['url']}")
 
@@ -348,6 +354,9 @@ def load_spell():
                 else:
                     variable = 'damage_at_slot_level'
                 
+                for d in spell['desc']:
+                    d.replace(',', ';') #sostituisco le virgole per evitare problemi nel csv
+
                 spell_list.append({
                     "name": spell['index'].capitalize(),
                     "level": spell['level'],
@@ -386,118 +395,75 @@ def load_spell():
         print("Errore nel recupero degli incantesimi.")
         return []
 
-def write_spells(spells, filename="spells.txt"):
+def write_spells(spells, filename):
     with open(filename, 'w') as file:
 
         for spell in spells:
-            file.write(f"{spell['name']};")
-            file.write(f"{spell['level']};")
-            file.write(f"{spell['school']};")
-            file.write(f"{'Ritual' if spell['ritual'] else 'No_Ritual'};")
-            file.write(f"{spell['casting_time']};")
-            file.write(f"{spell['range']};")
+            file.write(f"{spell['name']},")
+            file.write(f"{spell['level']},")
+            file.write(f"{spell['school']},")
+            file.write(f"{'Ritual' if spell['ritual'] else 'No_Ritual'},")
+            file.write(f"{spell['casting_time']},")
+            file.write(f"{spell['range']},")
             for c in spell['components']:
-                file.write(f"{c},")
-            file.write(";")
-            file.write(f"{'concentration' if spell['concentration'] else 'No_Concentration'};")
-            file.write(f"{spell['duration']};")  
+                if c != spell['components'][-1]:
+                    file.write(f"{c}/")
+                else:
+                    file.write(f"{c},")
+            
+            file.write(f"{'concentration' if spell['concentration'] else 'No_Concentration'},")
+            file.write(f"{spell['duration']},")  
             for d in spell['description']: 
                 file.write(f"{d}")
-            file.write(";")
-            file.write(f"{spell['attack_type']};")
+            file.write(",")
+            file.write(f"{spell['attack_type']},")
             if spell['area_of_effect'] != "No_AreaEffetc":
-                file.write(f"{spell['area_of_effect']['Type']}: {spell['area_of_effect']['Size']};")
+                file.write(f"{spell['area_of_effect']['Type']}:{spell['area_of_effect']['Size']},")
             else:
-                file.write("No_AreaEffect;")
+                file.write("No_AreaEffect,")
             
             if spell['damage'] != "No_Damage":
-                file.write(f"{spell['damage']['Type']};")
+                file.write(f"{spell['damage']['Type']},")
                 for scale in spell['damage']['Scaling']:
-                    file.write(f"{scale['Level']}: {scale['Amount']},")
+                    if scale != spell['damage']['Scaling'][-1]:
+                        file.write(f"{scale['Level']}:{scale['Amount']}/")
+                    else:
+                        file.write(f"{scale['Level']}:{scale['Amount']},")
             else:
-                file.write("No_Damage")
-            file.write(";")
+                file.write("No_Damage,")
 
             if spell['heal'] != "No_Heal":
                 for scale in spell['heal']:
-                    file.write(f"{scale['Level']}: {scale['Amount']},")
+                    if scale != spell['heal'][-1]:
+                        file.write(f"{scale['Level']}:{scale['Amount']}/")
+                    else:
+                        file.write(f"{scale['Level']}:{scale['Amount']},")
             else:
-                file.write("No_Heal")
-            file.write(";")
-            file.write(f"{spell['saving_throw']};\n")
+                file.write("No_Heal,")
+            file.write(f"{spell['saving_throw']}\n")
 
 #---------------------------------------------------------------------------------------------------------------------------------------
-def feature_template():
-    return [{
-        "Name": "Name"
-    }]
-
-def load_feature():
-    feature_list = feature_template()
-
-    
-    api_url = "https://www.dnd5eapi.co/api/features"
-    response = requests.get(api_url)
-
-    if response.status_code == 200:
-        data = response.json()
-        index = []
-
-        for feature in data['results']:
-            response = requests.get(f"https://www.dnd5eapi.co{feature['url']}")
-            
-            if response.status_code == 200:
-                feature = response.json()
-
-                nome_feature = feature['index']
-                if 'action-surge' in feature['index']:
-                    nome_feature = 'action-surge'
-                if 'ability-score-improvement' in feature['index']:
-                    nome_feature = 'ability-score-improvement'
-                index.append(nome_feature)
-
-
-                if feature['index'] not in index:
-                    feature_list.append({
-                        "Name": nome_feature,
-                        "Desc": feature['desc'],
-                        "Level": int(feature['level'])
-                    })
-                else: pass
-                
-            else:
-                print(f"Errore nel recupero")
-                
-        return feature_list
-    else:
-        print(f"Errore nel recupero della lista delle features.")
-        return []
-
-def write_feature():
-    pass
 
 def main():
     clear_terminal()
 
-    #---------------
-    weapon_list = load_weapons()
-    write_weapons(weapon_list)
-    print("Weapons data written to weapons.txt")
+    # #---------------
+    # weapon_list = load_weapons()
+    # filename = "weapons.csv"
+    # write_weapons(weapon_list, filename)
+    # print(f"Weapons data written to {filename}\n")
 
     #---------------
-    #spell_list = load_spell()
-    #write_spells(spell_list)
-    #print("Spells data written to spells.txt\n")
+    spell_list = load_spell()
+    filename = "spells.csv"
+    write_spells(spell_list, filename)
+    print(f"Spells data written to {filename}\n")
 
-    #---------------
-    #monster_list = load_monsters()
-    #write_monsters(monster_list)
-    #print("Monsters data written to monsters.txt")
+    # #---------------
+    # monster_list = load_monsters()
+    # filename = "monsters.csv"
+    # write_monsters(monster_list, filename)
+    # print(f"Monsters data written to {filename}\n")
 
-    #TODO
-    #---------------        
-    #feature_list = load_feature()
-    #write_feature(feature_list)
-    #print("Features data written to features.txt")    
 
 main()
