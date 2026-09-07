@@ -6,11 +6,12 @@
 struct pg{
     char name[20];
     int level;
-    int ca;
+    int armour_class;
+    int proficiency_bonus;
     float speed;    //metres?
     LIST set_features;
 };
 typedef struct pg *PG;
 
-PG NEW_pg(void);
+PG NEW_pg();
 #endif

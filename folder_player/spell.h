@@ -34,5 +34,5 @@ struct spell{
 };
 typedef struct spell *SPELL;
 
-SPELL NEW_spell(void);
+SPELL NEW_spell();
 #endif

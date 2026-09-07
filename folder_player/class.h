@@ -9,5 +9,5 @@ struct clas{
 };
 typedef struct clas *CLASS;
 
-CLASS NEW_class(void);
+CLASS NEW_class();
 #endif

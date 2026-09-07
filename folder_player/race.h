@@ -10,5 +10,5 @@ struct race{
 };
 typedef struct race *RACE;
 
-RACE NEW_race(void);
+RACE NEW_race();
 #endif
