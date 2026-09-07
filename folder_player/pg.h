@@ -6,6 +6,7 @@
 struct pg{
     char name[20];
     int level;
+    int ca;
     float speed;    //metres?
     LIST set_features;
 };
