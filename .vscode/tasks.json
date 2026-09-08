@@ -1,0 +1,29 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "cppbuild",
+            "label": "Compila D&D Sim",
+            "command": "gcc",
+"args": [
+    "-g3",
+    "-Wall",
+    "-Wextra",
+    "${workspaceFolder}\\main.c",
+    "${workspaceFolder}\\dice.c",
+    "-o",
+    "${workspaceFolder}\\dnd_sim.exe"
+],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}

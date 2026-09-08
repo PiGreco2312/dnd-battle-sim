@@ -1,6 +1,22 @@
 {
   "version": "0.2.0",
   "configurations": [
+    
+    
+    {
+      "name": "Debug D&D Sim",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}\\dnd_sim.exe",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "miDebuggerPath": "gdb.exe",
+      "preLaunchTask": "Compila D&D Sim"
+    },
     {
       "name": "C/C++ Runner: Debug Session",
       "type": "cppdbg",

@@ -10,19 +10,19 @@ typedef enum{
     ACTION,         //0
     BONUS_ACTION,   //1
     REACTION        //2
-}type_action;
+}action_type;
 
 struct feature{
     char name[MAX_NAME];
     char desc[MAX_DESC];
     int saving_throw;   //1: true, 0: false
     int number_uses;
-    type_action action;
+    action_type action;
 };
 typedef struct feature *FEATURE;
 
 FEATURE NEW_feature(void);
-FEATURE ADD_feature(char *, char *, int, int, type_action);
+FEATURE ADD_feature(char *, char *, int, int, action_type);
 void PRINT_feature(FEATURE);
 void READ_feature(FEATURE);
 
