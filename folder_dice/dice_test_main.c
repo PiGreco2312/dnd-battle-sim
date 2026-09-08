@@ -4,6 +4,10 @@
 #include<time.h>
 #include "dice.h"
 
+//cd c:\Users\paolo\projects\dnd-battle-sim\folder_dice\
+//gcc dice_test_main.c dice.c -o dice_test_main
+//.\dice_test_main
+
 int main(){
     srand(time(NULL));
     DICE d1, d2;
@@ -13,23 +17,6 @@ int main(){
         roll(d1, "8d6");
         print_roll(d1);
         printf("\n-----------------------------------------------------------------\n");
-        
-        roll(d1, "8d6");
-        print_roll(d1);
-        free(d1);
-        printf("\n-----------------------------------------------------------------\n");
-        printf("\n-----------------------------------------------------------------\n");
-
-        printf("Dice 2:\n");
-        d2=NEW();
-        roll(d2, "8d6");
-        print_roll(d2);
-        printf("\n-----------------------------------------------------------------\n");
-        
-        roll(d2, "8d6");
-        print_roll(d2);
-        free(d2);
-        printf("\n-----------------------------------------------------------------\n");
-        printf("\n-----------------------------------------------------------------\n");
+       
     }
 }
