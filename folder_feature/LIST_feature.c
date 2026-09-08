@@ -1,11 +1,13 @@
+#include<stdio.h>
+#include<stdlib.h>
 #include "LIST_feature.h"
 
-LIST_FEATURE NEW_LIST(){
+LIST_FEATURE NEW_list(){
   return NULL;
 }
 
 LIST_FEATURE INSERT_feature(FEATURE f, LIST_FEATURE head) {
-    LIST_FEATURE new_node = malloc(sizeof(struct LIST_node));
+    LIST_FEATURE new_node = malloc(sizeof(struct LIST_feature_node));
     
     if (new_node == NULL)
         return head; 
@@ -23,6 +25,5 @@ void PRINT_list(LIST_FEATURE head){
 }
 
 void READ_feature(FEATURE feature){
-  //FILE *fp=fopen("palle.txt", "r");
-  //close(fp);
+  //
 }
