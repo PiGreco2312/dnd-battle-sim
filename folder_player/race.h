@@ -1,7 +1,5 @@
 #ifndef _RACE_H
 #define _RACE_H
-#include<stdio.h>
-#include<stdio.h>
 #include<LIST_feature.h>
 
 struct race{

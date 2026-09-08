@@ -1,8 +1,6 @@
 #ifndef _SPELL_H
 #define _SPELL_H
 #define MAX_DIM 100
-#include<stdio.h>
-#include<stdlib.h>
 #include<LIST_feature.h>
 
 typedef struct timing{
