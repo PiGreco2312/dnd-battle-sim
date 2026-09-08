@@ -6,16 +6,14 @@
 /*
 LISTA DI FEATURE 
 */
-
-typedef struct LIST_node *LIST;
-
 struct LIST_node{
     FEATURE feature;
-    LIST next;
+    LIST_FEATURE next;
 };
+typedef struct LIST_node *LIST_FEATURE;
 
-LIST NEW_list();
-LIST INSERT_feature(FEATURE, LIST);
-void PRINT_list(LIST);
+LIST_FEATURE NEW_list();
+LIST_FEATURE INSERT_feature(FEATURE, LIST_FEATURE);
+void PRINT_list(LIST_FEATURE);
 
 #endif
